@@ -45,3 +45,34 @@ if (statusPedido) {
 } else {
   console.log("Pedido recusado");
 }
+// if(condicao){ // SE
+//   console.log("Pedido recusado");
+// } else if(condicao) { // SENÃO SE
+//   console.log("Pedido recusado");
+// } else { //SENÃO (Se tudo der falso)
+// console.log("Pedido recusado");
+// }
+//Exemplos
+// let produtos = [] //array vazio
+// produtos = ["Sanduiche",4,"Hamburguer",true, "Coxinha","Suco"]
+// let tamanho = produtos.length // tamanho 4
+// console.log(produtos[2])
+// let pizzas = [
+//   {
+//     id: 1,
+//     sabor: "4 Queijos",
+//     estoque: 10,
+//     tamanhos: ["Grande", "média", "brotinho"],
+//   },
+//   {
+//     id: 2,
+//     sabor: "Marguerita",
+//     estoque: 8,
+//     tamanhos: ["Grande"],
+//   }
+// ]
+let condicao = 1
+while (condicao < 5) {
+  console.log("Mostrar valor")
+  condicao++
+}
