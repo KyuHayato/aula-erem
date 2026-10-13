@@ -4,7 +4,7 @@ while (i < 5) {
   console.log("Repete o while");
   i = i + 1; //AUMENTA DE UM EM UM
 }
-i = 1;
+i = 1;                       
 do {
   // REPITA
   console.log("Repete o do...while");

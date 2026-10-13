@@ -52,7 +52,7 @@ if (statusPedido) {
 // } else { //SENÃO (Se tudo der falso)
 // console.log("Pedido recusado");
 // }
-//Exemplos
+// Exemplos
 // let produtos = [] //array vazio
 // produtos = ["Sanduiche",4,"Hamburguer",true, "Coxinha","Suco"]
 // let tamanho = produtos.length // tamanho 4
@@ -71,8 +71,8 @@ if (statusPedido) {
 //     tamanhos: ["Grande"],
 //   }
 // ]
-let condicao = 1
-while (condicao < 5) {
-  console.log("Mostrar valor")
-  condicao++
-}
+// let condicao = 1
+// while (condicao < 5) {
+//   console.log("Mostrar valor")
+//   condicao++
+// }
