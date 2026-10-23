@@ -1,11 +1,20 @@
 let catalogoProdutos = [];
-let tamanhoCatalogo = 0;
-let continuarCadastro = false;
+let continuarCadastro = true;
+const nomeLanchonete = "LancheTech";
 do {
-  catalogoProdutos[catalogoProdutos].nome = prompt("Nome do produto: ");
-  catalogoProdutos[tamanhoCatalogo].preco = prompt("Qual o preço: ");
-  catalogoProdutos[tamanhoCatalogo].estoque = prompt("Qual o estoque: ");
-  continuarCadastro = Boolean(prompt("Quer continuar cadastrando? "));
-  tamanhoCatalogo++
+  let nome = prompt("Nome do produto:");
+  let preco = Number(prompt("Qual o preço?"));
+  let estoque = Number(prompt("Qual o estoque?"));
+  let produto = {
+    id: catalogoProdutos.length + 1,
+    nome: nome,
+    preco: preco,
+    estoque: estoque,
+  };
+  catalogoProdutos.push(produto);
+  let resposta = prompt("Quer continuar cadastrando? (s/n)");
+  continuarCadastro =
+    resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
 } while (continuarCadastro);
-console.log(catalogoProdutos)
+alert(catalogoProdutos);
+
