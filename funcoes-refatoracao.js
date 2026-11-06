@@ -1,29 +1,30 @@
 // ============================================================================
-// GUIA DE ATUALIZAÇÃO: LANCHETECH (RF05 & DESAFIOS)
-// Instruções para os alunos:
-// 1. Procure pelas tags [NOVO REQUISITO] e implemente as funções indicadas.
-// 2. Procure pelas tags [ALTERAR / REFATORAR] para atualizar o código antigo.
-// 3. Os trechos com [MANTÉM IGUAL] já estão prontos da última aula.
+// SISTEMA LANCHETECH - ATUALIZAÇÃO PARA RF06 E DESAFIO DO ESTUDANTE
+// Conceitos: Funções modulares, toFixed(2), Template Literals e Validações
+//
+// GUIA DE ATUALIZAÇÃO PARA OS ALUNOS:
+// - [MANTÉM IGUAL]: Códigos já construídos nas aulas anteriores.
+// - [NOVO REQUISITO: RF06]: Códigos e funções novas a serem adicionadas.
+// - [ALTERAR / REFATORAR: RF06]: Funções que existiam, mas foram atualizadas.
 // ============================================================================
 
-const nomeLanchonete = "LancheTech";
+const nomeLanchonete = "LANCHETECH";
 const taxaEmbalagemPadrao = 2.0;
 
 let catalogoProdutos = [];
-
-// [NOVO]: Array para armazenar todos os pedidos cadastrados no sistema
 let listaDePedidos = [];
 
 // ============================================================================
-// 1. FUNÇÕES AUXILIARES
+// 1. FUNÇÕES AUXILIARES E FORMATAÇÃO
 // ============================================================================
 
-// [MANTÉM IGUAL]: Formatação de moeda
+// [ALTERAR / REFATORAR: RF06.3]
+// Atualizado para usar toFixed(2) e replace(".", ",") para padrão brasileiro (ex: R$ 37,00)
 function formatarMoeda(valor) {
-  return `R$ ${valor.toFixed(2)}`;
+  return `R$ ${valor.toFixed(2).replace(".", ",")}`;
 }
 
-// [MANTÉM IGUAL]: Busca linear manual no catálogo com for...of
+// [MANTÉM IGUAL]: Busca manual no catálogo com for...of (sem .find)
 function buscarProdutoPorId(idProduto, listaProdutos = catalogoProdutos) {
   for (let produto of listaProdutos) {
     if (produto.id === idProduto) {
@@ -34,102 +35,117 @@ function buscarProdutoPorId(idProduto, listaProdutos = catalogoProdutos) {
 }
 
 // ============================================================================
-// 2. NOVAS FUNÇÕES MODULARES (RF05 E DESAFIOS A, B, C, D)
+// 2. FUNÇÕES DE CÁLCULO (MANTIDAS DO RF05)
 // ============================================================================
-// [NOVO REQUISITO: RF05.1 / Desafio A]
-// Função para calcular o subtotal de um único item (preço * quantidade)
+
+// [MANTÉM IGUAL]: RF05.1 - Subtotal individual
 function calcularSubtotalItem(preco, quantidade) {
   return preco * quantidade;
 }
-// [NOVO REQUISITO: RF05.2 / Desafio B]
-// Função de cálculo de desconto com regra comercial:
-// - A partir de R$ 100 -> 10% de desconto
-// - A partir de R$ 50  -> 5% de desconto
-// - Menor que R$ 50    -> sem desconto (0)
-// ATENÇÃO: Esta é uma função pura: apenas recebe o subtotal e retorna o valor, sem alert ou console.log!
+
+// [MANTÉM IGUAL]: RF05.2 - Cálculo puro do desconto
 function calcularDesconto(subtotal) {
   if (subtotal >= 100) {
-    return subtotal * 0.10;
+    return subtotal * 0.10; // 10%
   } else if (subtotal >= 50) {
-    return subtotal * 0.05;
+    return subtotal * 0.05; // 5%
   } else {
-    return 0;
+    return 0; // Sem desconto
   }
 }
 
-// [NOVO REQUISITO: RF05.3 / Desafio C]
-// Composição de funções: reutiliza calcularDesconto() para calcular o total a pagar
+// [MANTÉM IGUAL]: RF05.3 - Cálculo do total final com desconto e taxa
 function calcularTotalFinal(subtotal, taxaEmbalagem) {
   let valorDesconto = calcularDesconto(subtotal);
-  let totalComDesconto = subtotal - valorDesconto + taxaEmbalagem;
-  return totalComDesconto;
+  return subtotal - valorDesconto + taxaEmbalagem;
 }
 
-// [NOVO REQUISITO: Desafio D]
-// Função calcularTotalPedido(itens, catalogo):
-// 1. Recebe a lista de itens do pedido e o catálogo de produtos
-// 2. Percorre os itens com for...of
-// 3. Busca o produto com buscarProdutoPorId()
-// 4. Calcula o subtotal chamando calcularSubtotalItem()
-// 5. Retorna o valor acumulado de todos os itens do pedido
+// [MANTÉM IGUAL]: Desafio D - Subtotal acumulado do pedido
 function calcularTotalPedido(itens, listaCatalogo) {
   let subtotalAcumulado = 0;
 
   for (let item of itens) {
     let produto = buscarProdutoPorId(item.idProduto, listaCatalogo);
-
     if (produto !== null) {
       let subtotalItem = calcularSubtotalItem(produto.preco, item.quantidade);
       subtotalAcumulado = subtotalAcumulado + subtotalItem;
     }
   }
+
   return subtotalAcumulado;
 }
 
-// [ALTERAR / REFATORAR: RF05.4 / Desafio do Estudante]
-// Refatoramos a antiga "emitirNotaFiscal": agora a função gerarResumoPedido()
-// REUTILIZA as funções de cálculo criadas acima e retorna o texto formatado.
+// ============================================================================
+// 3. NOVAS FUNÇÕES DO RF06 (STATUS E RESUMO FORMATADO)
+// ============================================================================
+
+// [NOVO REQUISITO: RF06.4]
+// Avalia as condições do pedido e retorna a mensagem de confirmação ou recusa
+function verificarStatusPedido(pedido, listaCatalogo) {
+  // Se o pedido não tiver itens cadastrados
+  if (pedido.itens.length === 0) {
+    return "Pedido recusado: nenhum item informado.";
+  }
+
+  // Verifica se todos os itens existem no cardápio
+  for (let item of pedido.itens) {
+    let produto = buscarProdutoPorId(item.idProduto, listaCatalogo);
+
+    if (produto === null) {
+      return "Pedido recusado: item não encontrado no catálogo.";
+    }
+  }
+
+  // Se passou em todas as verificações
+  return "Pedido aprovado.";
+}
+
+// [ALTERAR / REFATORAR: RF06.1, RF06.2, RF06.3, RF06.4 e Desafio do Estudante]
+// Gera exatamente a string com o formato visual exigido no desafio
 function gerarResumoPedido(pedido, listaCatalogo, taxaEmbalagem) {
-  // Chamada das funções modulares criadas no RF05:
+  // RF06.3: Cálculos financeiros utilizando as funções puras
   let subtotal = calcularTotalPedido(pedido.itens, listaCatalogo);
   let desconto = calcularDesconto(subtotal);
   let totalFinal = calcularTotalFinal(subtotal, taxaEmbalagem);
 
-  let linhasItens = "";
+  // RF06.4: Obtenção do status do pedido
+  let status = verificarStatusPedido(pedido, listaCatalogo);
 
+  // RF06.2: Construção da lista de itens no formato: "Nome x Qtd R$ Valor"
+  let linhasItens = "";
   for (let item of pedido.itens) {
     let produto = buscarProdutoPorId(item.idProduto, listaCatalogo);
     if (produto !== null) {
       let subtotalItem = calcularSubtotalItem(produto.preco, item.quantidade);
-      linhasItens = linhasItens + `${produto.nome} x ${item.quantidade}: ${formatarMoeda(subtotalItem)}\n`;
+      linhasItens = linhasItens + `${produto.nome} x ${item.quantidade} ${formatarMoeda(subtotalItem)}\n`;
     }
   }
 
-  // Template string com o resumo financeiro completo (com desconto)
-  let notaFiscal = `==============================
-       ${nomeLanchonete} - NOTA FISCAL
-==============================
-Pedido Nº: ${pedido.id}
-Cliente:   ${pedido.cliente}
-------------------------------
-ITENS:
-${linhasItens}------------------------------
-Subtotal:          ${formatarMoeda(subtotal)}
-Desconto:         -${formatarMoeda(desconto)}
-Taxa de Embalagem: ${formatarMoeda(taxaEmbalagem)}
-TOTAL A PAGAR:     ${formatarMoeda(totalFinal)}
-==============================`;
+  // RF06.1, RF06.2, RF06.3, RF06.4: Montagem via Template Literals com toFixed(2)
+  let resumo = `================================
+${nomeLanchonete}
+================================
+Pedido: ${pedido.id}
+Cliente: ${pedido.cliente}
+ITENS DO PEDIDO
+${linhasItens}Subtotal: ${formatarMoeda(subtotal)}
+Desconto: ${formatarMoeda(desconto)}
+Embalagem: ${formatarMoeda(taxaEmbalagem)}
+--------------------------------
+TOTAL: ${formatarMoeda(totalFinal)}
+Status: ${status}
+================================`;
 
-  return notaFiscal;
+  return resumo; // Retorna a string pronta para impressão
 }
 
 // ============================================================================
-// 3. ETAPAS DE CADASTRO E CARDÁPIO
+// 4. CADASTRO DE PRODUTOS E CARDÁPIO
 // ============================================================================
 
 // [MANTÉM IGUAL]: Cadastro inicial de produtos no cardápio
 function cadastrarProdutos() {
-  alert(`Bem-vindo à ${nomeLanchonete}!\nVamos iniciar o cadastro dos produtos no cardápio.`);
+  alert(`Bem-vindo à ${nomeLanchonete}!\nVamos cadastrar os produtos do cardápio.`);
 
   let continuarCadastro = true;
 
@@ -147,14 +163,14 @@ function cadastrarProdutos() {
 
     catalogoProdutos.push(novoProduto);
 
-    let resposta = prompt("Deseja cadastrar mais um produto no cardápio? (s/n)");
+    let resposta = prompt("Deseja cadastrar mais um produto? (s/n)");
     continuarCadastro = resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
   } while (continuarCadastro);
 }
 
-// [MANTÉM IGUAL]: Montagem do texto do cardápio
+// [MANTÉM IGUAL]: Montagem do cardápio
 function montarTextoCardapio() {
-  let textoCardapio = `=== CARDÁPIO ${nomeLanchonete.toUpperCase()} ===\n\n`;
+  let textoCardapio = `=== CARDÁPIO ${nomeLanchonete} ===\n\n`;
 
   for (let produto of catalogoProdutos) {
     textoCardapio = textoCardapio + `${produto.id} - ${produto.nome}: ${formatarMoeda(produto.preco)} (Estoque: ${produto.estoque})\n`;
@@ -163,7 +179,11 @@ function montarTextoCardapio() {
   return textoCardapio;
 }
 
-// [MANTÉM IGUAL]: Registro de um único pedido com múltiplos itens (RF04.2)
+// ============================================================================
+// 5. REGISTRO DE PEDIDOS
+// ============================================================================
+
+// [MANTÉM IGUAL]: Registro de um único pedido
 function criarPedidoCliente() {
   alert(montarTextoCardapio());
 
@@ -185,7 +205,7 @@ function criarPedidoCliente() {
     let produtoEncontrado = buscarProdutoPorId(idEscolhido, catalogoProdutos);
 
     if (produtoEncontrado === null) {
-      alert("Código de produto inválido! Tente novamente.");
+      alert("Código inválido! Tente novamente.");
     } else {
       let qtdDesejada = Number(
         prompt(`Quantas unidades de "${produtoEncontrado.nome}" você deseja?`)
@@ -196,6 +216,7 @@ function criarPedidoCliente() {
       } else if (qtdDesejada > produtoEncontrado.estoque) {
         alert(`Estoque insuficiente! Temos apenas ${produtoEncontrado.estoque} unidades.`);
       } else {
+        // Baixa imediata de estoque
         produtoEncontrado.estoque = produtoEncontrado.estoque - qtdDesejada;
 
         pedido.itens.push({
@@ -210,19 +231,17 @@ function criarPedidoCliente() {
     let resposta = prompt("Deseja adicionar mais algum produto neste mesmo pedido? (s/n)");
     adicionarMaisItens = resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
   }
+
   return pedido;
 }
-// ============================================================================
-// 4. PROCESSAMENTO DE VÁRIOS PEDIDOS (RF05.5)
-// ============================================================================
-// [NOVO]: Permite cadastrar múltiplos pedidos em fila usando um laço while
+
+// [MANTÉM IGUAL]: Cadastro de vários pedidos
 function cadastrarVariosPedidos() {
   let registrarOutroPedido = true;
 
   while (registrarOutroPedido) {
     let novoPedido = criarPedidoCliente();
 
-    // Valida se o cliente adicionou ao menos um item
     if (novoPedido.itens.length > 0) {
       listaDePedidos.push(novoPedido);
       alert(`Pedido #${novoPedido.id} registrado com sucesso!`);
@@ -235,40 +254,41 @@ function cadastrarVariosPedidos() {
   }
 }
 
-// [ALTERAR / REFATORAR: RF05.5 e Desafio D]
-// Repetição Aninhada:
-// - Repetição Externa (aqui): percorre a listaDePedidos com for...of
-// - Repetição Interna (dentro de gerarResumoPedido): percorre os itens de cada pedido
+// ============================================================================
+// 6. PROCESSAMENTO E EMISSÃO DE NOTAS (RF06 E DESAFIO DO ESTUDANTE)
+// ============================================================================
+
+// [ALTERAR / REFATORAR]: Processa os pedidos e imprime a string retornada
 function processarVariosPedidos(pedidos, catalogo) {
-  alert(`\nProcessando notas fiscais de ${pedidos.length} pedido(s)...`);
+  alert(`\nProcessando ${pedidos.length} pedido(s)...`);
 
   for (let pedido of pedidos) {
-    // Reutiliza a função gerarResumoPedido para cada pedido da lista
-    let notaFiscal = gerarResumoPedido(pedido, catalogo, taxaEmbalagemPadrao);
+    // A função retorna a string formatada
+    let textoResumo = gerarResumoPedido(pedido, catalogo, taxaEmbalagemPadrao);
 
-    alert(notaFiscal);
-    console.log(notaFiscal);
+    // Critério do Desafio: exibir na tela (alert) e no terminal (console.log)
+    alert(textoResumo);
+    console.log(textoResumo);
   }
 }
 
 // ============================================================================
-// 5. FLUXO PRINCIPAL (ALTERAR)
+// 7. FLUXO PRINCIPAL DO PROGRAMA
 // ============================================================================
 
-// 1. Cadastro inicial do cardápio
+// 1. Cadastra os produtos no cardápio
 cadastrarProdutos();
 
-// [ALTERAR]: Em vez de processar apenas 1 pedido, agora cadastramos vários e processamos a lista completa
+// 2. Se houver produtos cadastrados, inicia o registro dos pedidos
 if (catalogoProdutos.length > 0) {
-  // Registra 1 ou mais pedidos interativamente
   cadastrarVariosPedidos();
 
-  // Se houver pedidos válidos cadastrados, emite todas as notas
+  // 3. Processa e exibe todos os resumos
   if (listaDePedidos.length > 0) {
     processarVariosPedidos(listaDePedidos, catalogoProdutos);
   } else {
-    alert("Nenhum pedido foi concluído.");
+    alert("Nenhum pedido foi realizado.");
   }
 } else {
-  alert("Nenhum produto cadastrado no catálogo. Sistema encerrado.");
+  alert("Nenhum produto cadastrado no sistema.");
 }
