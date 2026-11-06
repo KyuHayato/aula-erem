@@ -20,9 +20,10 @@ let listaDePedidos = [];
 
 // [ALTERAR / REFATORAR: RF06.3]
 // Atualizado para usar toFixed(2) e replace(".", ",") para padrão brasileiro (ex: R$ 37,00)
-function formatarMoeda(valor) {
-  return `R$ ${valor.toFixed(2).replace(".", ",")}`;
-}
+// function formatarMoeda(valor) {
+//   return `R$ ${valor.toFixed(2).replace(".", ",")}`;
+// }
+const formatarMoeda = valor => `R$ ${valor.toFixed(2).replace(".", ",")}`;
 
 // [MANTÉM IGUAL]: Busca manual no catálogo com for...of (sem .find)
 function buscarProdutoPorId(idProduto, listaProdutos = catalogoProdutos) {
@@ -46,7 +47,7 @@ function calcularSubtotalItem(preco, quantidade) {
 // [MANTÉM IGUAL]: RF05.2 - Cálculo puro do desconto
 function calcularDesconto(subtotal) {
   if (subtotal >= 100) {
-    return subtotal * 0.10; // 10%
+    return subtotal * 0.1; // 10%
   } else if (subtotal >= 50) {
     return subtotal * 0.05; // 5%
   } else {
@@ -117,7 +118,9 @@ function gerarResumoPedido(pedido, listaCatalogo, taxaEmbalagem) {
     let produto = buscarProdutoPorId(item.idProduto, listaCatalogo);
     if (produto !== null) {
       let subtotalItem = calcularSubtotalItem(produto.preco, item.quantidade);
-      linhasItens = linhasItens + `${produto.nome} x ${item.quantidade} ${formatarMoeda(subtotalItem)}\n`;
+      linhasItens =
+        linhasItens +
+        `${produto.nome} x ${item.quantidade} ${formatarMoeda(subtotalItem)}\n`;
     }
   }
 
@@ -145,7 +148,9 @@ Status: ${status}
 
 // [MANTÉM IGUAL]: Cadastro inicial de produtos no cardápio
 function cadastrarProdutos() {
-  alert(`Bem-vindo à ${nomeLanchonete}!\nVamos cadastrar os produtos do cardápio.`);
+  alert(
+    `Bem-vindo à ${nomeLanchonete}!\nVamos cadastrar os produtos do cardápio.`,
+  );
 
   let continuarCadastro = true;
 
@@ -158,13 +163,14 @@ function cadastrarProdutos() {
       id: catalogoProdutos.length + 1,
       nome: nome,
       preco: preco,
-      estoque: estoque
+      estoque: estoque,
     };
 
     catalogoProdutos.push(novoProduto);
 
     let resposta = prompt("Deseja cadastrar mais um produto? (s/n)");
-    continuarCadastro = resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
+    continuarCadastro =
+      resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
   } while (continuarCadastro);
 }
 
@@ -173,7 +179,9 @@ function montarTextoCardapio() {
   let textoCardapio = `=== CARDÁPIO ${nomeLanchonete} ===\n\n`;
 
   for (let produto of catalogoProdutos) {
-    textoCardapio = textoCardapio + `${produto.id} - ${produto.nome}: ${formatarMoeda(produto.preco)} (Estoque: ${produto.estoque})\n`;
+    textoCardapio =
+      textoCardapio +
+      `${produto.id} - ${produto.nome}: ${formatarMoeda(produto.preco)} (Estoque: ${produto.estoque})\n`;
   }
 
   return textoCardapio;
@@ -193,14 +201,14 @@ function criarPedidoCliente() {
   let pedido = {
     id: numPedido,
     cliente: nomeCliente,
-    itens: []
+    itens: [],
   };
 
   let adicionarMaisItens = true;
 
   while (adicionarMaisItens) {
     let idEscolhido = Number(
-      prompt(`${montarTextoCardapio()}\nDigite o CÓDIGO do produto desejado:`)
+      prompt(`${montarTextoCardapio()}\nDigite o CÓDIGO do produto desejado:`),
     );
     let produtoEncontrado = buscarProdutoPorId(idEscolhido, catalogoProdutos);
 
@@ -208,28 +216,33 @@ function criarPedidoCliente() {
       alert("Código inválido! Tente novamente.");
     } else {
       let qtdDesejada = Number(
-        prompt(`Quantas unidades de "${produtoEncontrado.nome}" você deseja?`)
+        prompt(`Quantas unidades de "${produtoEncontrado.nome}" você deseja?`),
       );
 
       if (qtdDesejada <= 0) {
         alert("Quantidade inválida! Informe um número maior que zero.");
       } else if (qtdDesejada > produtoEncontrado.estoque) {
-        alert(`Estoque insuficiente! Temos apenas ${produtoEncontrado.estoque} unidades.`);
+        alert(
+          `Estoque insuficiente! Temos apenas ${produtoEncontrado.estoque} unidades.`,
+        );
       } else {
         // Baixa imediata de estoque
         produtoEncontrado.estoque = produtoEncontrado.estoque - qtdDesejada;
 
         pedido.itens.push({
           idProduto: produtoEncontrado.id,
-          quantidade: qtdDesejada
+          quantidade: qtdDesejada,
         });
 
         alert(`Adicionado: ${qtdDesejada}x ${produtoEncontrado.nome}`);
       }
     }
 
-    let resposta = prompt("Deseja adicionar mais algum produto neste mesmo pedido? (s/n)");
-    adicionarMaisItens = resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
+    let resposta = prompt(
+      "Deseja adicionar mais algum produto neste mesmo pedido? (s/n)",
+    );
+    adicionarMaisItens =
+      resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
   }
 
   return pedido;
@@ -249,8 +262,11 @@ function cadastrarVariosPedidos() {
       alert("Nenhum item adicionado. Pedido cancelado.");
     }
 
-    let resposta = prompt("Deseja registrar OUTRO pedido para outro cliente? (s/n)");
-    registrarOutroPedido = resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
+    let resposta = prompt(
+      "Deseja registrar OUTRO pedido para outro cliente? (s/n)",
+    );
+    registrarOutroPedido =
+      resposta.toLowerCase() === "s" || resposta.toLowerCase() === "sim";
   }
 }
 
@@ -259,9 +275,21 @@ function cadastrarVariosPedidos() {
 // ============================================================================
 
 // [ALTERAR / REFATORAR]: Processa os pedidos e imprime a string retornada
-function processarVariosPedidos(pedidos, catalogo) {
-  alert(`\nProcessando ${pedidos.length} pedido(s)...`);
+// function processarVariosPedidos(pedidos, catalogo) {
+//   alert(`\nProcessando ${pedidos.length} pedido(s)...`);
 
+//   for (let pedido of pedidos) {
+//     // A função retorna a string formatada
+//     let textoResumo = gerarResumoPedido(pedido, catalogo, taxaEmbalagemPadrao);
+
+//     // Critério do Desafio: exibir na tela (alert) e no terminal (console.log)
+//     alert(textoResumo);
+//     console.log(textoResumo);
+//   }
+// }
+//Refatorando função com Arrow Function
+const processarVariosPedidos = (pedidos, catalogo) => {
+  alert(`\nProcessando ${pedidos.length} pedido(s)...`);
   for (let pedido of pedidos) {
     // A função retorna a string formatada
     let textoResumo = gerarResumoPedido(pedido, catalogo, taxaEmbalagemPadrao);
@@ -270,7 +298,7 @@ function processarVariosPedidos(pedidos, catalogo) {
     alert(textoResumo);
     console.log(textoResumo);
   }
-}
+};
 
 // ============================================================================
 // 7. FLUXO PRINCIPAL DO PROGRAMA
