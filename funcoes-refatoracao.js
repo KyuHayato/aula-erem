@@ -1,12 +1,3 @@
-// ============================================================================
-// SISTEMA LANCHETECH - ATUALIZAÇÃO PARA RF06 E DESAFIO DO ESTUDANTE
-// Conceitos: Funções modulares, toFixed(2), Template Literals e Validações
-//
-// GUIA DE ATUALIZAÇÃO PARA OS ALUNOS:
-// - [MANTÉM IGUAL]: Códigos já construídos nas aulas anteriores.
-// - [NOVO REQUISITO: RF06]: Códigos e funções novas a serem adicionadas.
-// - [ALTERAR / REFATORAR: RF06]: Funções que existiam, mas foram atualizadas.
-// ============================================================================
 
 const nomeLanchonete = "LANCHETECH";
 const taxaEmbalagemPadrao = 2.0;
@@ -14,15 +5,6 @@ const taxaEmbalagemPadrao = 2.0;
 let catalogoProdutos = [];
 let listaDePedidos = [];
 
-// ============================================================================
-// 1. FUNÇÕES AUXILIARES E FORMATAÇÃO
-// ============================================================================
-
-// [ALTERAR / REFATORAR: RF06.3]
-// Atualizado para usar toFixed(2) e replace(".", ",") para padrão brasileiro (ex: R$ 37,00)
-// function formatarMoeda(valor) {
-//   return `R$ ${valor.toFixed(2).replace(".", ",")}`;
-// }
 const formatarMoeda = valor => `R$ ${valor.toFixed(2).replace(".", ",")}`;
 
 // [MANTÉM IGUAL]: Busca manual no catálogo com for...of (sem .find)
@@ -34,10 +16,6 @@ function buscarProdutoPorId(idProduto, listaProdutos = catalogoProdutos) {
   }
   return null;
 }
-
-// ============================================================================
-// 2. FUNÇÕES DE CÁLCULO (MANTIDAS DO RF05)
-// ============================================================================
 
 // [MANTÉM IGUAL]: RF05.1 - Subtotal individual
 function calcularSubtotalItem(preco, quantidade) {
